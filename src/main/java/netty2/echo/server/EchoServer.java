@@ -1,5 +1,8 @@
 package netty2.echo.server;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -9,16 +12,23 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.oio.OioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.ResourceLeakDetector;
+import io.netty.util.ResourceLeakDetector.Level;
 
 public class EchoServer {
+	
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(EchoServer.class);
 	
 	private final int port;
 	public EchoServer(int port) {
 		super();
 		this.port = port;
 	}
-
+	
 	public static void main(String[] args) throws InterruptedException {
+		
+		ResourceLeakDetector.setLevel(Level.PARANOID);
 		
 		int port = 9090;
 		
@@ -26,6 +36,9 @@ public class EchoServer {
 	}
 	
 	public void start() throws InterruptedException {
+		
+		ResourceLeakDetector.setLevel(Level.SIMPLE);
+		
 		final EchoServerHandler serverHandler = 
 				new EchoServerHandler();
 		
@@ -43,8 +56,8 @@ public class EchoServer {
 						protected void initChannel(SocketChannel ch) throws Exception {
 							//					无状态的ChannelHandler可以被标注为@Shareable，被标注为@Shareable的
 							//					ChannelHandler总是可以使用同样的实例。
-							ch.pipeline().addLast(serverHandler)
-							.addLast(new EchoServerOutHandler());
+							ch.pipeline().addLast(serverHandler);
+//							.addLast(new EchoServerOutHandler());
 						}
 					});
 			//sync 阻塞等待知道绑定完成

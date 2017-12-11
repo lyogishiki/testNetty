@@ -45,9 +45,10 @@ public class EchoClient {
 				}
 			});
 			ChannelFuture f = b.bind().sync();
+			
 			System.out.println(f.channel().getClass());
 			System.out.println("mmmm"+f.channel());
-			
+//			System.out.println(f.channel().alloc());
 			f.channel().closeFuture().sync();
 		} finally {
 			group.shutdownGracefully().sync();

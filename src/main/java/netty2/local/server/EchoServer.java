@@ -1,6 +1,8 @@
 package netty2.local.server;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -52,10 +54,23 @@ public class EchoServer {
 							.addLast(new EchoServerOutHandler());
 						}
 					});
+			
+			
+			
 			//sync 阻塞等待知道绑定完成
 			ChannelFuture future = bootstrap.bind().sync();
-			
 			System.out.println(future.channel().getClass());
+			ByteBufAllocator allocator = future.channel().alloc();
+			
+			ByteBuf buf = allocator.buffer(1024);
+			
+			System.out.println("refCnt:"+buf.refCnt());
+			buf.release();
+			System.out.println("refCnt:"+buf.refCnt());
+			
+//			buf.writeInt(1);
+			
+			System.out.println(allocator.getClass());
 			//获取closeFuture 并等待完成
 			future.channel().closeFuture().sync();	//
 			

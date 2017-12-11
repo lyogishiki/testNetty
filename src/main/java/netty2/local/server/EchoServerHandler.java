@@ -5,6 +5,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import java.nio.charset.StandardCharsets;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelFuture;
@@ -18,6 +19,12 @@ ChannelInboundHandlerAdapter{
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 	
+		System.out.println(msg.getClass());
+		
+		
+//		ByteBufUtil.
+//		ctx.alloc()
+		
 		ByteBuf in = (ByteBuf) msg;
 		String receiveMsg = in.toString(StandardCharsets.UTF_8);
 		

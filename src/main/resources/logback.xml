@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--scan:当此属性设置为true，配置文件如果发生改变，将会被重新加载，默认true
+scanPeriod：检测修改间隔时间。如果没有给出单位，默认单位毫秒，
+debug：为true时，将会打印logback内部日志信息，实时查看logback运行状态，默认false -->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+	<!-- contextName 设置上下文名称
+	每个logger都关联到logger上下文，默认上下文名称为default，但可以使用设置成其他名字，
+	用于区分不同应用的记录。一旦设置，不能修改，可以通过%contextName来打印上下文名称 -->
+    <contextName>myLogback</contextName>
+    <!--设置变量property，name是变量的名称,value是定义变量的值，定义变量之后，可以通过${}来使用变量，
+    可以定义很多个  -->
+    
+    <property name="log.path" value="E:\\ss\\logback\\logback" />
+    
+    <!-- appender用来格式化日志输出，有name和class两个属性，class用来指定输出策略。常用的就是控制台输出
+    和文件输出。 -->
+    <!--输出到控制台-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- ThresholdFilter为系统定义的拦截器，过滤掉定义级别以下的记录.可以对记录的信息再次过滤。
+    	可以对不同的输出形式有不同的输出级别。比如 控制台输出error ， 文件却包含info，warn级别 -->
+       <!-- <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter> -->
+        <!--%d{yyyy-MM-dd HH:mm:ss.SSS} ...日志输出时间
+        	%contextName ... 自定义的上下文名称
+        	%thread ... 输出日志的进程名字，在web应用及异步任务处理中有用  
+        	%-5level ... 日志级别，并使用5个字符靠左对齐 
+        	%logger{36} ... 日志输出者的名字
+        	%msg ... 日志消息
+        	%n ... 平台的换行符
+        	%file 打印日志的文件 和 logger 作用相似
+        	-->
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %contextName [%thread] [%logger{36} : %line] %-5level - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+     <!--输出到文件，RollingFileAppender 用于切分日志。-->
+    <appender name="file"
+        class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- file定义路径 -->
+        <file>${log.path}.log</file>
+        
+	<!-- rollingPolicy日志切分规则。
+        	这里按照时间，把一天的日志保存在一个文件里，
+        	有很多切分方式，比如按照大小的SizeBasedTriggeringPolicy，定义大小超过切分
+        	当然也有按照大小和时间SizeAndTimeBasedRollingPolicy，按需使用
+        	...fileNamePattern 中需要加上日志路径,否则日志文件会保存在项目路径中 -->
+        	
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}.%d{yyyy-MM-dd}.log</fileNamePattern>
+           <!--  maxHistory表示只保留30天的日志 -->
+            <maxHistory>30</maxHistory>
+            <!-- totalSizeCap 表示保存日志的文件上限大小 -->
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %contextName [%thread] [%logger{36} : %line] %-5level - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+<!-- root是必选子节点，用来指定最基础的日志级别，只有level属性
+	level 大小写无挂，TRACE，DEBUG，INFO，WARN，ERROR，ALL，OFF，
+	默认debug，
+	可以包含0个或多个appender -->
+    <root level="INFO">
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+    </root>
+
+	<!-- logger用来设置某一个具体的包或者具体的累的日志打印机别，以及指定appender，
+	logger 仅有一个name属性，一个可选的level和一个可选的addtivity属性。
+	 addtivity是否向上级传递打印信息，默认true -->
+    <!-- logback为java中的包 -->
+    <!-- 这个logger没有设置任何输出，默认向上级传递信息，那么就默认使用上级也就是root的输出规则，
+      -->
+   <!--  <logger name="com.controller"/> -->
+    <!--logback.LogbackDemo：类的全路径,
+    	这个logger设置了具体的输出appender，并且设置addtivity为false
+    	那么就仅在设置了appender的上输出日志，如果addtivity设置为true，
+    	那么就会在console输出两次信息， -->
+   <!--  <logger name="com.controller.LearnController" level="WARN" additivity="false">
+        <appender-ref ref="console"/>
+    </logger> -->
+    
+    
+    <!-- 根据环境不同，使用不同的日志输出。使用spring.profiles.active 指定，不指定不匹配 -->
+    <!-- 测试环境+开发环境. 多个使用逗号隔开. -->
+		<!-- <springProfile name="test,dev">
+		    <logger name="com.controller.LearnController" level="DEBUG" />
+		</springProfile>
+		生产环境.
+		<springProfile name="prod">
+		    <logger name="com.controller.LearnController" level="ERROR" />
+		</springProfile> -->
+		
+		
+</configuration>

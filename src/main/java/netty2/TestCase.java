@@ -1,10 +1,20 @@
 package netty2;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
+
+import com.google.common.reflect.Invokable;
+import com.google.common.reflect.Reflection;
+import com.google.common.reflect.TypeToken;
+
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.ByteBufHolder;
 import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -69,5 +79,21 @@ public class TestCase {
 		System.out.println(head == messageBuf.component(0));
 		System.out.println(head);
 		System.out.println(messageBuf.component(0));
+	}
+	
+	@Test
+	public void test03() throws NoSuchFieldException, SecurityException {
+		Field field = Processor.class.getField("i");
+		
+		System.out.println(Modifier.isStatic(field.getModifiers()));
+		
+		
+		
+	}
+	
+	@Test
+	public void test04() {
+		ByteBufAllocator.DEFAULT.buffer();
+//		ByteBufHolder holder = ;
 	}
 }

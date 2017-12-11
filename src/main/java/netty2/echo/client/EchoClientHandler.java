@@ -7,6 +7,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.ReferenceCountUtil;
+import io.netty.util.internal.ThreadLocalRandom;
 
 public class EchoClientHandler extends 
 SimpleChannelInboundHandler<ByteBuf>{
@@ -30,6 +31,8 @@ SimpleChannelInboundHandler<ByteBuf>{
 	而在channelReadComplete后释放资源
 	
 	*/
+	
+	
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
 		System.out.println(
@@ -40,9 +43,11 @@ SimpleChannelInboundHandler<ByteBuf>{
 	//当与服务器的连接建立后调用
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		ThreadLocalRandom random = ThreadLocalRandom.current();
+		
 		//
 		ctx.writeAndFlush(Unpooled.copiedBuffer(
-				"Hello Netty!", StandardCharsets.UTF_8));
+				"Hello Netty!" + random.nextInt(10000), StandardCharsets.UTF_8));
 		System.out.println("EchoClientHandler.channelActive()" + ctx.channel());
 	}
 

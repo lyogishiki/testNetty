@@ -1,6 +1,8 @@
 package netty2.echo.client;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
 
@@ -62,9 +64,23 @@ public class EchoClient {
 			}).start();
 			
 		}*/
+		
+		ExecutorService service = Executors.newFixedThreadPool(4);
+		
+		/*for(int i=0;i<100*10;i++) {
+			service.submit(() -> {
+				try {
+					new EchoClient(host, port).start();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+		}*/
 		new EchoClient(host, port).start();
 		long end = System.currentTimeMillis();
 		
 		System.out.println(end - start);
+		
+		service.shutdown();
 	}	
 }

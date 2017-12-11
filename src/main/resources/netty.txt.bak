@@ -1,0 +1,73 @@
+ChannelHandler 他的实现负责接收并相应事件通知，可以是使用ChannelInboundHandlerAdapter类，提供了默认的
+ChannelInboundHandler的实现
+channelRead 对每个传入的消息都要调用
+channelReadComplete 通知ChannelInboundHandler最后一个对channelRead()的调用时当前批量读取的最后一条消息。
+exceptionCaught 在读取期间，有一场抛出时会调用
+
+ChannelInitializer 一个CHannleHandler的实例，
+当一个新的连接被接受时，会产生一个新的Channel将会被创建，而CHannelInitializr将会把一个你的
+自定义个CHannelHandler添加到这个Channel的CHannelPipeline中，这个CHannelHandler会受到有关入栈消息的通知。
+channel	NIOServerSocketChannel NioSocketChannel 
+ChannelFuture 异步的future
+
+EventLoop EventLoopGroup 使用EventLoop处理IO时间
+一个EventLoop在生命周期内之和一个Thread绑定
+Chaneel 所有属于通过一个Channel的操作都被保证其将以调用的顺序执行
+ChannelPipeline 提供CHannelHandler链的容器。Channel创建时会被自动的分配专属的ChannelPipeline，
+	1，ChannelInitializer 的实现被注册到了BootStrap中
+	2，ChannelInitializer.initChannel 方法被调用，把ChannelHandler添加到ChannelPipeline链中
+	3，ChannelInitializer将他自己从ChannelPipeline中移除,因为ChannelInitialixer也是一个CHannelHandler，需要移除。
+channelHandler 处理逻辑，CHannelHandler接收事件，执行他们所实现的处理逻辑，并将数据传给下一个CHannelHandler，
+	执行顺序是由他们被添加的顺序所决定，
+	ChannelInoundHandler 接收入站事件和数据，这些数据随后将会被你的应用程序的业务逻辑所处理。
+		SimpleChannelInboundHandlerAdapter
+	ChannelOutboundHandler	出站事件和数据，数据的出站运动（即正在被写的数据），数据将从ChannelOutboundHandler
+	链的尾端开始流动，知道它到达链的头部为止，在这之后，数据将会到达网络传输层，通常情况下会触发一个写操作。
+	ChannelHandlerAdapter
+	ChannelDuplexHandler
+	ChannelHandler用途，1将数据从一种格式转为另外一种格式
+		2，提供异常的通知，
+		3，提供CHannel变为活动的或者非活动的通知，
+		4，提供当Channel注册到EventLoop或从EventLoop中注销的通知
+		5，提供有关用户自定义事件的通知
+CHannelHandlerContext 代表CHannelHandler和ChannelPipeline之间的绑定。虽然可以获取Channel
+	但主要功能还是用来写出站数据
+Netty有两种消息发送机制，
+	1，直接写入CHannel中，导致消息从ChannelPipeline尾端开始流动
+	2，写入ChannelHandlerContext ctx中，导致消息从ChannelPipeline中的下一个CHannelHandler开始流动，ctx.fiteChannelRead
+网络数据总是一系列的字节
+ByteToMessageDecoder MessageToByteEncoder
+BootStrap，客户端连接到远程服务器，使用一个EventLoopGroup
+ServerBootStrap	，服务端，绑定本地连接，使用2个EventLoopGroup，可以使同一个实例，
+	parentGroup只包含ServerChannel，代表服务器自身的已经绑定到某个本地端口的正在监听的套接字，
+	parentGroup中的EventLoop负责为传入的连接请求创建Channel，EventLoopGroup负责分配这个EventLoop
+	childGroup包含所有已创建的用来处理传入客户端连接的Channel
+
+Netty的Channel是线程安全的。消息会被保证按顺序发送
+零拷贝 是一种快速搞笑的将数据从文件系统移动到网络接口，而不需要将其从内核空间复制到用户空间
+Epoll linux的本地非阻塞传输
+Netty 使用Epoll，linux环境，高负载情况下，可能由于JDK NIO
+	只需将NioEventLoopGroup替换为EpollEventLoopGroup，NIOServerSocketChannel替换为
+	EpollServerSocketChannel即可。
+非阻塞代码库或一个常规的起点	NIO 或在Linux上的epoll
+阻塞代码库			OIO
+在同一个JVM内部的通信		Local，Default
+测试ChannelHandler的实现	Embedded
+
+ByteBuf readIndex,writeIndex,capacity, get,set方法不会触发readIndex，writeIndex的改变。	
+	read,write方法改变readIndex，writeIndex，也可以手动调用readIndex(),writeIndex()方法修改这两个值。
+directByteBuf，JVM堆外内存，主要是为了避免在每次调用本地I/O 操作之前（或者之后）将缓冲区的内容复
+制到一个中间缓冲区（或者从中间缓冲区把内容复制到缓冲区）。不回收垃圾回收影响，当然分配和回收较为昂贵。
+	回收需要full GC来回收。。。
+支撑ByteBuffy  有byte[]支撑，JVM堆空间中
+复合缓冲区 CompositByteBuf
+
+
+
+
+
+
+
+
+
+
