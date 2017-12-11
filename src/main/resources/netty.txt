@@ -127,7 +127,7 @@ ChannelInboundHandler
 对于写的数据，每次写完之后都会release释放资源。调用write会释放资源，Channel关闭时也会再次释放资源，关闭Channel时关闭的却是DirectBuf，并不是我们申请的那一个。
 对于读到的ByteBuf数据，要在最后的ChannelInboundHandler中调用ReferenceCountHandler.release方法，确定释放了资源。
 	
-	
+	111
 	
 	
 	
