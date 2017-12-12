@@ -127,7 +127,48 @@ ChannelInboundHandler
 对于写的数据，每次写完之后都会release释放资源。调用write会释放资源，Channel关闭时也会再次释放资源，关闭Channel时关闭的却是DirectBuf，并不是我们申请的那一个。
 对于读到的ByteBuf数据，要在最后的ChannelInboundHandler中调用ReferenceCountHandler.release方法，确定释放了资源。
 	
-	111
+ChannelOutboundHandler的write方法,如果消息被消费或者丢弃了,而且并没有传递给ChannelPipeline中下一个ChannelOutboundHandler那么就需要调用ReferenceCountUtil
+和ChannelPromise的setSuccess之类的方法处理。
+
+ChannelPipeline：每一个新建的ChannelPipeline都会被
+	分配一个新的ChannelPipeline，Channel的生命周期内既不能附加另外一个ChannelPipeline，也不能分离器当前的
+	
+ChannelHandlerContext使得ChannelHandler能够和他的ChannelPipeline以及其他的CHannelHandler交互，
+ChannelHandler可以通知其所属的ChannelPipeline中的下一个CHannelHandler。甚至可以动态地修改他所属的ChannelPipeline，	
+	
+add 添加CHannelHandler
+remove	移除ChannelHandler
+replace	替换
+		
+CHannelHandler的执行和阻塞
+	通常ChannelPipeline中的每个ChannelHand而都是通过他的EventLoop来处理传递给他的事件的，所以不要阻塞这个线程，
+	不要阻塞这个线程!不要阻塞这个线程！但是有时会有可能与阻塞API交互，ChannelPipeline有接收一个EventExecutorGroup的add的方法，
+	如果一个事件被传递给一个自定义的EventExecutorGroup，他将被包含在这个EventExecutorGroup中的某个EventExecutor处理，从而
+	被Channel本身的EventLoop中移除，对于这种用例，Netty提供了一个叫DefaultEventExecutorGroup的默认实现，
+	
+	ChannelPipeline用于访问ChannelHanlder的操作
+	get 通过类型或者名称返回CHannelHandler
+	context 返回和CHannelHandler绑定的ChannelHandlerContext
+	names 返回ChannelPipeline中所有ChannelHandler的名称
+
+ChannelPipeline的入站操作	
+	FireChannelXX 调用ChannelPipeline中的下一个ChannelInboundHandler的ChannelXX方法
+
+ChannelPipeline的出站操作
+	bind -> 将Channel绑定到下一个本地地址，将调用ChannelPipeline中的下一个ChannelOutboundHandler的bind方法。
+	connect	->	将Channel连接到一个远程地址，将调用ChannelPipeline中下一个ChannelOutboundHandlerHandler的connect方法
+	disconnect ->	将Channel断开连接
+	close -> 将Channel关闭
+	deregister -> 将Channel从它先前分配的EventExecutor(EventLoop)中注销
+	flush 冲刷Channel所有挂起的写入
+	write -> 将消息写入Channel，这并不会将消息写入底层的Socket，而只是会把数据放入队列中，
+		需要调用flush 或者 writeAndFlush方法。
+	writeAndFlush 先write然后flush
+	read -> 请求从Channel中读取更多的数据。	
+	
+	ChannelPipeline保存了与Channel相关联的CHannelHandler
+	ChannelPipeline可以根据需要，通过添加或者删除Channelhandler来动态修改
+	ChannelPipeline有着丰富的API，以响应入站和出站事件
 	
 	
 	

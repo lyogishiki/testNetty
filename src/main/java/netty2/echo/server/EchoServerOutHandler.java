@@ -18,8 +18,20 @@ public class EchoServerOutHandler extends ChannelOutboundHandlerAdapter{
 		System.out.println("EchoServerOutHandler.write()");
 		System.out.println(msg);
 		System.out.println(promise);
+		
+		
 		super.write(ctx, msg, promise);
+		
+		
+		
+//		c
+//		ReferenceCountUtil.release(msg);
+//		通知ChannelPromise消息已被处理，使channelFutureListener
+//		接收到通知.
+//		promise.setSuccess();
+//		
 	}
+	
 
 	
 	
