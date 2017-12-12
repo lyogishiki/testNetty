@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.local.LocalServerChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -56,7 +57,10 @@ public class EchoServer {
 						protected void initChannel(SocketChannel ch) throws Exception {
 							//					无状态的ChannelHandler可以被标注为@Shareable，被标注为@Shareable的
 							//					ChannelHandler总是可以使用同样的实例。
-							ch.pipeline().addLast(serverHandler);
+							ch.pipeline()
+							.addLast(serverHandler)
+							.addLast(new EchoServerHandler2());
+//							.addLast(new EchoServerHandler3());
 //							.addLast(new EchoServerOutHandler());
 						}
 					});

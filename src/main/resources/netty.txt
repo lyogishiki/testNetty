@@ -169,9 +169,49 @@ ChannelPipeline的出站操作
 	ChannelPipeline保存了与Channel相关联的CHannelHandler
 	ChannelPipeline可以根据需要，通过添加或者删除Channelhandler来动态修改
 	ChannelPipeline有着丰富的API，以响应入站和出站事件
+
+ChannelHandlerContext 
+	alloc 返回和实例相关联的Channel所配置ByteBufferAllocator
+	bind 绑定到给定的SocketAddress,并返回ChannelFuture
+	close 关闭Channel,并返回ChannelFuture
+	connect 连接给定的SocketAddress，并返回ChannelFuture
+	disConnect 从远程节点断开，并返回ChannelFuture。
+	executor 返回调度事件的EventExecutor
+	name 返回这个实例的唯一名称
+	pipeline 返回这个实例所关联的ChannelPipeline
+	Read
+	Handler 返回绑定到这个实例的ChannelHandler
 	
+	ChannelHandlerContext和ChannelHandler之间的关联（绑定）是永远
+	不会改变的，所以缓存对他的引用时安全的，每一个ChannelHandler都有自己的ChannelHandlerContext。
 	
+	ChannelHandlerContext的方法将会产生更短的事件流，应该尽可能的利用这个
+	特性获得最大的性能，
 	
+	使用Channel的write方法会导致时间从尾端到头部流经ChannelPipeline
+
+入站异常
+如果发生异常，而且没有CHannelHandler处理那么就会抛出以下警告
+2017-12-12 12:34:52 [nioEventLoopGroup-3-1] 
+[i.n.channel.DefaultChannelPipeline.warn:151] WARN  - 
+An exceptionCaught() event was fired, and it reached at the tail of the pipeline. 
+It usually means the last handler in the pipeline did not handle the exception.
+
+出站异常
+每个出站操作都返回一个ChannelFuture，祖册到CHannelFuture的ChannleFutureListener将在完成时被通知高操作是成功
+还是出错。
+几乎所有的CHannelOutboundHandler的方法都会传入一个CHannelPromise的实力，作为ChannelFuture的子类，ChannelPromise
+可以被分配用于异步通知的监听器，但是ChannelPromise还提供了立即通知的可写方法
+
+setSuccess setFailure
+
+永远不要将一个长时间运行的任务放入到执行队列中，因为它将阻塞需要在同一线程上执行的任何其他任务。
+EventLoopGroup 负责为每个新创建的Channel分配一个EventLoop，一旦一个Channel被分配给了一个EventLoop，他将在他的整个生命周期
+都是用这个EventLoop(以及相关联的Thread)
+
+bootstrap 实现cloneable，但是他的拷贝是一个浅拷贝，所有的克隆的Bootstrap都会使用同一个EventLoopGroup，
+这在一些情况下是可用的
+
 	
 	
 	

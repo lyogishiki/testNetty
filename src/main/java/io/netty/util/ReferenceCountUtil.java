@@ -17,6 +17,9 @@ package io.netty.util;
 
 import java.nio.charset.StandardCharsets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Objects;
 
 import io.netty.buffer.ByteBuf;
@@ -29,7 +32,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
  */
 public final class ReferenceCountUtil {
 
-	private static final InternalLogger logger = InternalLoggerFactory.getInstance(ReferenceCountUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(ReferenceCountUtil.class);
 
 	static {
 		ResourceLeakDetector.addExclusions(ReferenceCountUtil.class, "touch");

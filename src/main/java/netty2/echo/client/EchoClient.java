@@ -13,6 +13,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.AttributeKey;
 
 public class EchoClient {
 
@@ -31,7 +32,10 @@ public class EchoClient {
 		
 		try {
 			Bootstrap b = new Bootstrap();
-			b.group(group).channel(NioSocketChannel.class)
+			b.group(group)
+			.channel(NioSocketChannel.class)
+			
+			.attr(AttributeKey.valueOf("testKey"), "testValue")
 			.handler(
 					new ChannelInitializer<SocketChannel>() {
 				@Override
@@ -55,19 +59,10 @@ public class EchoClient {
 		long start = System.currentTimeMillis();
 		String host = "127.0.0.1";
 		int port = 9090;
-		/*for(int i=0;i<10;i++) {
-			new Thread(() -> {
-				try {
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}).start();
-			
-		}*/
 		
 		ExecutorService service = Executors.newFixedThreadPool(4);
 		
-		/*for(int i=0;i<100*10;i++) {
+		/*for(int i=0;i<100;i++) {
 			service.submit(() -> {
 				try {
 					new EchoClient(host, port).start();

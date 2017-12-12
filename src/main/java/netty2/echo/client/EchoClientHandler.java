@@ -2,10 +2,14 @@ package netty2.echo.client;
 
 import java.nio.charset.StandardCharsets;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.internal.ThreadLocalRandom;
 
@@ -31,13 +35,16 @@ SimpleChannelInboundHandler<ByteBuf>{
 	而在channelReadComplete后释放资源
 	
 	*/
-	
+	private static final Logger LOGGER = LoggerFactory.getLogger(EchoClient.class);
 	
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
-		System.out.println(
+		
+		LOGGER.warn(ctx.channel().attr(AttributeKey.valueOf("testKey")).toString());
+		
+		LOGGER.warn(
 				"received message : "+msg.toString(StandardCharsets.UTF_8));
-		System.out.println("EchoClientHandler.channelRead0()" + ctx.channel());
+		LOGGER.info("EchoClientHandler.channelRead0()" + ctx.channel());
 	}
 
 	//当与服务器的连接建立后调用
@@ -48,7 +55,7 @@ SimpleChannelInboundHandler<ByteBuf>{
 		//
 		ctx.writeAndFlush(Unpooled.copiedBuffer(
 				"Hello Netty!" + random.nextInt(10000), StandardCharsets.UTF_8));
-		System.out.println("EchoClientHandler.channelActive()" + ctx.channel());
+		LOGGER.info("EchoClientHandler.channelActive()" + ctx.channel());
 	}
 
 	@Override
