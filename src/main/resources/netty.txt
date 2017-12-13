@@ -212,7 +212,16 @@ EventLoopGroup 负责为每个新创建的Channel分配一个EventLoop，一旦�
 bootstrap 实现cloneable，但是他的拷贝是一个浅拷贝，所有的克隆的Bootstrap都会使用同一个EventLoopGroup，
 这在一些情况下是可用的
 
+EmbeddedChannel
+	writeInbound() 将入栈消息写到EmbeddedChannel中，如果可以通过readInbound()方法从EmbeddedChannel中读取数据，返回true
+	readInbound()	从EmbeddedChannel中读取一个入站消息，任何返回的数据都穿越了整个ChannelPipeline，如果没有任何可供读取的数据，则返回null
+	writeOutbound 	将出站消息写到EmbeddedChannel中。
+	readOutbound
+	finish 将EmbeddedCHannel标记为完成，并且如果有可被读取得入站数据或者出站数据，则返回true，这个方法还会调用EmbeddedCHannel上的close方法
 	
+FixedLengthFrameDecoder
+	
+		
 	
 	
 	

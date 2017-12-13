@@ -41,7 +41,7 @@ ChannelInboundHandlerAdapter{
 		ByteBuf in = (ByteBuf) msg;
 		String receiveMsg = in.toString(StandardCharsets.UTF_8);
 		ThreadLocalRandom random = ThreadLocalRandom.current();
-		LOGGER.info(receiveMsg + "-" + System.identityHashCode(ctx));
+		LOGGER.warn(receiveMsg + "-" + System.identityHashCode(ctx));
 		
 		//System.out.println(ctx.channel().getClass());
 		
@@ -58,21 +58,21 @@ ChannelInboundHandlerAdapter{
 //		throw new RuntimeException("123456778");
 		
 		
-		EventExecutor executor = ctx.executor();
+		/*EventExecutor executor = ctx.executor();
 		LOGGER.info(executor.getClass() + ":" + System.identityHashCode(executor)
 					+ executor);
-		LOGGER.warn(System.identityHashCode(this)+"");
-		EXECUTOR_GROUP.execute(() -> {
+		LOGGER.warn(System.identityHashCode(this)+"");*/
+		/*EXECUTOR_GROUP.execute(() -> {
 			try {
 				Thread.sleep(5000);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
-			ctx.channel().writeAndFlush(buf).addListener(ChannelFutureListener.CLOSE);
 			
-		});
+		});*/
 		
+		ctx.channel().writeAndFlush(buf).addListener(ChannelFutureListener.CLOSE);
 		ctx.fireChannelRead(msg);
 		
 		
