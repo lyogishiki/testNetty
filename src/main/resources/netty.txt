@@ -221,7 +221,19 @@ EmbeddedChannel
 	
 FixedLengthFrameDecoder
 	
-		
+ByteToMessageDecoder
+	decode 必须实现的唯一抽象方法。传入包含数据的bytebuf，对这个方法的调用会重复进行，以确保没有新的元素被添加到List，如果List不为空，那么他的内容会被传递给ChannelPipeline中的下一个CHannelInboundHandler
+	
+	decodeLast 默认实现只是简单调用decode方法，当Channel的状态变为非活动时，这个方法将会被调用一次，可以重写该方法以提供特殊的处理。
+
+编解码器中的引用计数
+	对于编解码器而言，一旦消息被编码或者被解码，就会被referenceCountUtil.release(message)调用释放，如果要保留引用以便稍后使用，那么要调用
+	ReferenceCountUtil.retain(message)方法，这将会增加引用计数，从而防止该消息被释放。
+	
+ReplayingDecoder用异常捕获机制来做到对读取数据长度的校验，
+	每次ReplayingDecoderByteBuf读取不到合适的数据就会抛出Signal，然后被捕获，忽略，继续读取，感觉略低效。
+	
+如果使用ByteToMessageDecoder不会引入太多复杂性，就使用，否则用ReplayingDecoder	
 	
 	
 	

@@ -46,7 +46,7 @@ public class EchoServer {
 		//接收新链接
 		EventLoopGroup bossGroup = new NioEventLoopGroup(1);
 		//处理新链接
-		EventLoopGroup workGroup = new NioEventLoopGroup(2);
+		EventLoopGroup workGroup = new NioEventLoopGroup(6);
 		
 		try {
 			ServerBootstrap bootstrap = new ServerBootstrap();
@@ -58,8 +58,8 @@ public class EchoServer {
 							//					无状态的ChannelHandler可以被标注为@Shareable，被标注为@Shareable的
 							//					ChannelHandler总是可以使用同样的实例。
 							ch.pipeline()
-							.addLast(serverHandler)
-							.addLast(new EchoServerHandler2());
+							.addLast(serverHandler);
+							//.addLast(new EchoServerHandler2());
 //							.addLast(new EchoServerHandler3());
 //							.addLast(new EchoServerOutHandler());
 						}

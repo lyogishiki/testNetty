@@ -87,7 +87,7 @@ public class TestClient {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			group.shutdownGracefully();
+			group.shutdownGracefully().syncUninterruptibly();
 		}
 	}
 }

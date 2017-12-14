@@ -62,7 +62,7 @@ public class EchoClient {
 		
 		ExecutorService service = Executors.newFixedThreadPool(4);
 		
-		for(int i=0;i<100*100*10;i++) {
+		for(int i=0;i<100*10;i++) {
 			service.submit(() -> {
 				try {
 					new EchoClient(host, port).start();

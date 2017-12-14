@@ -52,9 +52,11 @@ SimpleChannelInboundHandler<ByteBuf>{
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 		
+		for(int i=0;i<100;i++) {
+			ctx.writeAndFlush(Unpooled.copiedBuffer(
+					"Hello Netty!" + random.nextInt(10000), StandardCharsets.UTF_8));
+		}
 		//
-		ctx.writeAndFlush(Unpooled.copiedBuffer(
-				"Hello Netty!" + random.nextInt(10000), StandardCharsets.UTF_8));
 		LOGGER.info("EchoClientHandler.channelActive()" + ctx.channel());
 	}
 
