@@ -234,16 +234,31 @@ ReplayingDecoder用异常捕获机制来做到对读取数据长度的校验，
 	每次ReplayingDecoderByteBuf读取不到合适的数据就会抛出Signal，然后被捕获，忽略，继续读取，感觉略低效。
 	
 如果使用ByteToMessageDecoder不会引入太多复杂性，就使用，否则用ReplayingDecoder	
-	
-	
-	
-	
-	
-	
+lineBasedFrameDecoder使用行尾控制符来解析消息数据
+HTTPObjectDecoder http数据解码器
+io.netty.handler.codec
 
+MessageToMessageDecoder
+	把消息从一种格式转换为另一种格式。
+	
+ToLongFrameException 不能让解码器缓存大量数据，以至于耗尽可用的内存。
+	
+MessageToByteEncoder
+	encode	
 
+解码器decoder通常要在关闭之后产生最后一个消息，因此也就有了decodeLast，这显然不适合编码器的场景，
 
+MessageToMessageEncoder 每个通过write方法写入的消息都会被传递给encode方法，
 
+ByteToMessageCodec	结合ByteToMessageDecoder以及MessageToByteEncoder
+	先解码，然后再次编码。
+	decode 
+	decodeLast
+	encode
+MessageToMessageCodec<INBOUND_IN,OUTBOUND_IN) INBOUND_IN 网络传输类型，OUT_BOUND内部使用类型	
+	decode	INBOUND -> OUTBOUND
+	encode	OUTBOUNT -> INBOUND
 
+ombinedChannelDuplexHandler 组合起来的编解码器
 
 
