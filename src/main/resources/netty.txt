@@ -262,3 +262,88 @@ MessageToMessageCodec<INBOUND_IN,OUTBOUND_IN) INBOUND_IN 网络传输类型，OU
 ombinedChannelDuplexHandler 组合起来的编解码器
 
 
+Http请求的第一部分包含了Http请求信息，第二部分包含了一个或多个HTTPContent信息，第三部分包含Http请求结束的信息(LastHttpContent标记了该Http请求结束)
+HTTPRequest -> HttpContent .... -> LastHttpContent
+HttpResponse -> HttpContent ... -> LastHttpContent
+
+FullHTTPRequest和FullHTTPResponse 代表了完整的请求和相应。所有类型的Http消息都实现了HTTPObject接口。
+
+HttpRequestEncoder 将HTTPRequest,HttpContent,LastHttpContent 编码为字节
+HttpResponseEncoder 将HTTPREsponse，HTTPContent，LastHTTPContent编码为字节
+HttpRequestEncoder 将字节码解码为HTTPRequest，HTTPContent，LastHTTPContent
+HttpResponseDecoder 将字节码解码为HttpResponse，HTTPContent，LastHTTPContent
+
+聚合Http消息，Http消息可能有很多部分，所以需要聚合已形成一个完整的消息。
+由于消息需要被缓冲，直到可以转发一个完整的消息提供给下一个ChannelInboundHander，所以这个操作
+有轻微的开销。
+
+Http压缩
+	当时用Http时，建议开启压缩功能以尽可能多的减少传输数据的大小，虽然压缩会带来一些cpu上的开销，但通常来说都是个好主意、
+	Netty提供了CHannelHandler实现，同时支持gzip和delate编码
+
+BinaryWebSocketFrame	 数据帧：二进制数据
+TextWebSocketFrame		数据帧：文本数据	
+ContinuationWebSocketFrame	数据帧：属于上一个BInaryWebSocketFrame或者TextWebSocketFrame的文本或者二进制数据
+CloseWebSocketFrame		控制帧 一个close请求，挂你的状态码以及关闭的原因
+PingWebSocketFrame		控制帧，请求一个PongWEbSOcketFrame
+PongWebSocketFrame		控制帧：对PingWebSocketFrame	请求的响应
+
+IdleStateHandler	当空闲时间太长，将会触发一个IdelStateEvent事件，然后可以在CHannelInboundHandlerHandler中重写userEventTriggered方法来处理该IdelStateEvent事件
+ReadTimeoutHandler	如果在指定的时间间隔内没有收到任何的入站数据，则抛出一个ReadTimeoutException并关闭对应的Channel，可以通过重写你的CHannelHandler中的exceptionCaught方法来检测ReadTimeoutException
+WriteTimeoutHandler 如果指定的时间间隔内并没有任何出站数据，则抛出一个writeTimeoutException并关闭对应的Channel，可以通过重写CHannelHandler的exceptionCaught方法来检测该WriteTimeoutException
+
+使用分隔符的协议解码器。
+DelimiterBaseFrameDecoder 使用任何由用户提供的分隔符来提取数据帧的通用解码器
+LineBasedFrameDecoder	提取由行尾(\r\n ,\n)分隔的解码器，比DelimiterBasedFrameDecoder更快
+
+基于长度的协议
+	基于长度的协议通过将他的长度编码到帧头部来定义帧，而不是使用特殊的分隔符来标记
+	
+	FixedLengthFrameDecoder 用于提取指定长度的定长帧
+	LengthFieldBasedFrameDecoder 用于处理变长帧 	根据编码帧头部中的长度值提取帧，该字段的偏移量以及长度在构造函数中指定。
+	
+	长度在帧中偏移量及偏移量长度
+
+写大数据量，由于写操作是非阻塞的，所以即使没有写出所有数据，写操作也会在完成时返回并通知CHannelFuture，这时，如果依然不停写入，就有内存耗尽的风险。
+	所以在写大型数据时，需要准备好处理到远程节点的连接是慢速连接的情况。
+	使用FileRegion接口的实现，通过支持零拷贝的文件传输的Channel来发送文件区域。
+	
+使用FileRegion的情况只适合于文件内容的直接传输，不包括应用程序对数据进行任何处理，如果有需要处理的情况(如使用SSL加密)
+	可以使用ChunkedWriteHandler，ChunkedFile，它支持异步写大型数据流，而又不会导致大量内存损耗。
+
+ChunkedFile 从文件中逐块获取数据，当你的平台不支持零拷贝或者你需要转换数据时使用
+ChunkedNioFile  和ChunkedFile类似，只是他是用了FileChannel。
+ChunkedStream 	从InputStream中逐块的传输内容
+ChunkedNioStream  从ReadableByteChannel 中逐块传输内容。	
+	
+序列化
+	CompatibleObjectDecoder 和使用JDK序列化的非Netty的远程节点进行相互操作的解码器
+	CompatibleObjectENcoder 和使用JDK序列化的 编码器
+	ObjectDecoder 构建于JDK序列化之上的使用自定义的序列化的解码器，当没有其他的外部依赖时，这个提供了速度上的改进，否则其他的序列化实现更加可取
+	ObjectEncoder 
+
+JBoss Marshaling	
+	compatibleMarshallingDecoder 
+	compatibleMarshallingEncoder 与只是用JDK序列化的远程节点兼容
+	
+	MarshallingDecoder
+	MarshallingEncoder 适用于JBoss Marshalling的节点，必须一起使用。
+	
+Protobuf
+	ProtobufDecoder		使用protobuf对消息解码
+	ProtobufEncoder
+	ProtobufVarint32FrameDecoder	根据消息中的Google Protocol Buffers 的Base 128 Varints 整形长度字段动态的分割所接受的ByteBuf
+	ProtobufVarint32LengthFieldPrepender	向ByteBuf前追加一个Google Protocal BUffers的Base 128Varints整形的长度字符串
+
+
+
+
+
+
+
+
+
+
+
+
+

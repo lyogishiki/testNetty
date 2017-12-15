@@ -30,8 +30,13 @@ public class SslChannelInitializer extends ChannelInitializer<Channel>{
 	protected void initChannel(Channel ch) throws Exception {
 		//使用Channel的ByteBufAllocator获取一个新的SSLEngine
 		SSLEngine engine = context.newEngine(ch.alloc());
+		SslHandler sslHandler = new SslHandler(engine,startTls);
 		ch.pipeline().addFirst("ssl",
-				new SslHandler(engine,startTls));
+				sslHandler);
+//		设置超时时间，超时之后，握手ChannelFture将会被通知失败
+//		sslHandler.setHandshakeTimeout(handshakeTimeout, unit);
+//		设置超时时间，超时之后将会出发一个关闭通知并关闭连接，这也将会导致ChannelFUture失败
+//		sslHandler.setCloseNotifyFlushTimeout(closeNotifyFlushTimeout, unit);(closeNotifyTimeout, unit);
 	}
 
 }
