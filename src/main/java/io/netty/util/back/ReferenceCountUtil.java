@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package io.netty.util;
+package io.netty.util.back;
 
 import java.nio.charset.StandardCharsets;
 
@@ -23,6 +23,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Objects;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.util.ReferenceCounted;
+import io.netty.util.ResourceLeakDetector;
+import io.netty.util.ThreadDeathWatcher;
 import io.netty.util.internal.StringUtil;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;

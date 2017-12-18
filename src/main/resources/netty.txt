@@ -332,8 +332,48 @@ JBoss Marshaling
 Protobuf
 	ProtobufDecoder		使用protobuf对消息解码
 	ProtobufEncoder
-	ProtobufVarint32FrameDecoder	根据消息中的Google Protocol Buffers 的Base 128 Varints 整形长度字段动态的分割所接受的ByteBuf
-	ProtobufVarint32LengthFieldPrepender	向ByteBuf前追加一个Google Protocal BUffers的Base 128Varints整形的长度字符串
+	ProtobufVarint32FrameDecoder	根据消息中的Google Protocol Buffers 的Base 128 Varints 整形长度字段动态的分割所接受的ByteBuf,接收时用来分割接收到的信息，
+	ProtobufVarint32LengthFieldPrepender	向ByteBuf前追加一个Google Protocal BUffers的Base 128Varints整形的长度字符串，发送时用来添加分割使用的信息
+
+WebSocket帧 WebSocket以帧的方式传输数据，每一帧代表消息的一部分，一个完整的消息可能会包含许多帧。
+	BinaryWebSocketFrame	 包含二进制数据
+	TextWebSocketFrame		包含文本数据
+	ContinuationWebSocketFrame	包含属于上一个BinaryWebSocketFrame或者TextWebSocjetFrame的文本数据或者二进制数据
+	CloseWebSocketFrame		表示一个CLOSE请求，包含一个关闭的状态码和关闭的原因。
+	PingWebSocketFrame		请求传输一个PongWebSocketFrame
+	PongWebSocketFrame		作为一个对PingWebSocketFrame的响应被发送。
+	
+	HttpServerCodec 	将字节码解为HTTPRequest，HTTPContent和lastHTTPContent，并将HTTPResponse，HTTPContent，LastHTTPContent编码为字节。
+	ChunkedWriteHandler	写入大码流文件，而不会出现OutOfMemory
+	httpObjectAggregator	讲一个HttpMessage和跟随他的多个HTTPContent，LastHTTPContent聚合为单个FullHTTPRequest，FullHTTPResponse，安装这个
+		Channelhandler之后，ChannelPipeline中的下一个ChannelHandler将只会收到完整的Http请求
+		
+	WebSocketServerProtocolHandler	按照WebSocket规范的要求，处理WebSocket升级握手，PingWebSocjetFrame，PongWebSocketFrame，和CloseWebSocketFrame.
+		Netty的WebSocketServerprotocolhandler处理了所有委托管理的WebSocket帧类型以及升级握手本身，如果握手成功，那么所需的ChannelHandler将会被添加到ChannelPipeline中，而那些不再需要的ChannelHandler将会被移除
+		当WebSocket升级完成之后，WebSocketServerProtocolhandler将会把HTTPRequestDecoder替换为WebSocketFrameDecoder，HttpResponseEncoder替换为WebSocketFrameEncoder，为了性能的最大化，将移除任何卜再被WebSocket
+		所需要的ChannelHandler，（包括httpObjectAggregator，Httprequesthandler）
+	##TextWebSocketFramehandler	处理TextWebSocketFrame和握手事件。
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

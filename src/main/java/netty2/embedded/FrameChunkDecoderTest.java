@@ -13,7 +13,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.TooLongFrameException;
-import io.netty.util.ReferenceCountUtil;
+import io.netty.util.back.ReferenceCountUtil;
 
 public class FrameChunkDecoderTest {
 
