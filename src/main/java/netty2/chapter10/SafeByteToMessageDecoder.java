@@ -19,11 +19,7 @@ public class SafeByteToMessageDecoder extends ByteToMessageDecoder {
 			in.skipBytes(readable);//跳过所有可读的字节，
 			throw new TooLongFrameException("Frame Too Long!");
 		}
-		// doSomething
-		//TODO
-		//FIXME
-		//XXX
-		//TASK
+		
 	}
 
 	

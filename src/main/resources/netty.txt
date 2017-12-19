@@ -354,12 +354,15 @@ WebSocket帧 WebSocket以帧的方式传输数据，每一帧代表消息的一�
 		所需要的ChannelHandler，（包括httpObjectAggregator，Httprequesthandler）
 	##TextWebSocketFramehandler	处理TextWebSocketFrame和握手事件。
 	
+UDP
+	AddressedEnvelope<M,A extends SocketAddress>	定义一个消息，其包装了另一个消息并带有发送者和接受者地址，	M是消息类型，A是地址类型
+	DefaultAddressedEnvelope	提供了AddressedEnvelope的默认实现
+	DatagramPacket extends DefalutAddressedEnvelope implements ByteBufHolder	扩展了DefaultAddressedEnvelope以使用ByteBuf作为消息数据容器。
+	DatagramChannel 扩展了Netty的Channel抽象以支持UDP的多播组管理
+	NioDatagramChannel 定义了一个能够发送和接受AddressedEnvelope消息的Channel
 	
-
-
-
-
-
+	DtagramPacket是一个简单的消息容器，DatagrameChannel实现用它来和远程节点通信。
+	包含了接受者和可选的发送者的地址，以及消息的有效负载本身。
 
 
 

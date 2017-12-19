@@ -48,7 +48,7 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
 		super();
 		this.wsUri = wsUri;
 	}
-
+ 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) throws Exception {
 		// 如果请求了WebSocket协议升级，则增加引用计数（调用retain方法），并传给下一个
