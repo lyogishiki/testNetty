@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import io.netty.util.ByteProcessor;
 
@@ -99,5 +100,38 @@ public class TestCase {
 		System.out.println(c4);
 	}
 	
+	@Test
+	public void test05() {
+		String helloworld = "helloworld";
+		byte[] contents = helloworld.getBytes(StandardCharsets.UTF_8);
+		long start = System.currentTimeMillis();
+		ByteBuf buf = null;
+		for(int i=0,max=300*100*100;i<max;i++) {
+			buf = PooledByteBufAllocator.DEFAULT.buffer(1024);
+			buf.writeBytes(contents);
+			buf.release();
+		}
+		System.out.println(buf);
+		long end = System.currentTimeMillis();
+		
+		System.out.println(end - start);
+	}
+	
+	@Test
+	public void test06() {
+		String helloworld = "helloworld";
+		byte[] contents = helloworld.getBytes(StandardCharsets.UTF_8);
+		long start = System.currentTimeMillis();
+		ByteBuf buf = null;
+		for(int i=0,max=300*100*100;i<max;i++) {
+			buf = Unpooled.buffer(1024);
+			buf.writeBytes(contents);
+			buf.release();
+		}
+		System.out.println(buf);
+		long end = System.currentTimeMillis();
+		
+		System.out.println(end - start);
+	}
 	
 }

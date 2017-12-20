@@ -364,13 +364,30 @@ UDP
 	DtagramPacket是一个简单的消息容器，DatagrameChannel实现用它来和远程节点通信。
 	包含了接受者和可选的发送者的地址，以及消息的有效负载本身。
 
+ChannelOptin
+SO_RECVBUF和SO_SNDBUF 通常建议值为128K或者256K
+SO_TCPNODELAY：NAGLE算法通过将缓冲区内的小封包自动组成一个大的封包，组织大量小包发送阻塞网络，从而提高网络效率，但是对于延时敏感的场景需要关闭这项优化，true 关闭优化，有数据就发。
+软终端：如果LINUX内
+SO_BACKLOG 用于构建服务器端ServerSocket，标识当服务器请求处理线程全满，用于临时存放已完成3次握手请求的队列的最大长度。
+SO_KEEPALIVE	启动心跳机制。如果在两个小时内没有数据通信，TCP会自动发送一个活动探测数据报文。
 
 
 
+ChannelInboundHandlerAdapter需要自己释放接收到的ByteBuffer。****
+通常作如下处理,一定不要忘记释放Bytebuf，否则可能会造成内存泄漏
+@override
+public void channedRead(ChannelHandlerContext ctx,Object msg){
+
+	try{
+	
+	}finally{
+		ReferenceCountUtil.release(msg);
+	}
+}
 
 
-
-
+传递给ByteToMessageDecoder和MessageToByteEncoder的 ByteBuf 无需我们自己释放，会被Netty自动释放掉，
+	ByteToMesageDecoder的释放代码在channelRead finally中，MessageToByteEncoder的在write方法中
 
 
 

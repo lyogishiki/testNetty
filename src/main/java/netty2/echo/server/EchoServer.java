@@ -44,14 +44,17 @@ public class EchoServer {
 				new EchoServerHandler();
 		
 		//接收新链接
-		EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+		EventLoopGroup bossGroup = new NioEventLoopGroup(2);
 		//处理新链接
 		EventLoopGroup workGroup = new NioEventLoopGroup(6);
 		
 		try {
 			ServerBootstrap bootstrap = new ServerBootstrap();
 			bootstrap.group(bossGroup, workGroup)	//
-			.channel(NioServerSocketChannel.class).localAddress(port)
+			.channel(NioServerSocketChannel.class)
+//			.option(option, value)			//NioServerSocket 接受连接的使用
+//			.childOption(childOption, value)	//接收到连接后，新建的和客户端通信的Channel的Option
+			.localAddress(port)
 					.childHandler(new ChannelInitializer<SocketChannel>() {
 						@Override
 						protected void initChannel(SocketChannel ch) throws Exception {
