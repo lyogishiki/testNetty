@@ -29,7 +29,7 @@ public class NettyMessageServerInitializer extends ChannelInitializer<Channel>{
 			.addLast(new NettyMessageEncoder())
 			.addLast(new NettyMessageDecoder(NettyMessage.class))
 			.addLast(LoginAuthRespHandler.DEFAULT_INSTANCE)
-			.addLast(new HeartBeatRespHandler())
+			.addLast(HeartBeatRespHandler.DEFAULT_INSTANCE)
 			.addLast(NettyMessageHandler.DEFAULT_INSTANCE);
 	}
 

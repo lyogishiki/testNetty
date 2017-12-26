@@ -45,7 +45,8 @@ public class LoginAuthRespHandler extends ChannelInboundHandlerAdapter{
 			String ip = address.getAddress().getHostAddress();
 			if(ServerContext.isWhite(ip)) {	//白名单
 				loginResp = buildResponse((byte) 0);
-				ServerContext.userLogin(channel, ip);
+				String localAddress = address.getAddress().getHostAddress() + ":" + address.getPort();
+				ServerContext.userLogin(channel, localAddress);
 			}else{	//黑名单
 				loginResp = buildResponse((byte) -1);
 			}

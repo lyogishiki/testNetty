@@ -2,12 +2,16 @@ package netty2.pri.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelHandler.Sharable;
 import netty2.pri.MessageType;
 import netty2.pri.NettyMessage;
 import netty2.pri.NettyMessage.Header;
 
+@Sharable
 public class HeartBeatRespHandler extends ChannelInboundHandlerAdapter {
 
+	public static final HeartBeatRespHandler DEFAULT_INSTANCE = new HeartBeatRespHandler();
+	
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		NettyMessage<Object> message = (NettyMessage<Object>) msg;
