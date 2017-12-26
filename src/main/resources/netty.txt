@@ -140,11 +140,16 @@ add 添加CHannelHandler
 remove	移除ChannelHandler
 replace	替换
 		
-CHannelHandler的执行和阻塞
+ChannelHandler的执行和阻塞
 	通常ChannelPipeline中的每个ChannelHand而都是通过他的EventLoop来处理传递给他的事件的，所以不要阻塞这个线程，
 	不要阻塞这个线程!不要阻塞这个线程！但是有时会有可能与阻塞API交互，ChannelPipeline有接收一个EventExecutorGroup的add的方法，
 	如果一个事件被传递给一个自定义的EventExecutorGroup，他将被包含在这个EventExecutorGroup中的某个EventExecutor处理，从而
 	被Channel本身的EventLoop中移除，对于这种用例，Netty提供了一个叫DefaultEventExecutorGroup的默认实现，
+	
+	关注这里的定时任务，如果没有传递DefaultEventExecutorGroup ,那么就是用的是 EventLoopGroup也就是IO
+	线程，客户端的话应该是没什么问题，使用默认的eventLoopGroup也是没有问题的
+	,如果是服务端，而且任务是长时间执行的话，应该需要 传递一个DefaultEventLoopGroup，
+	避免阻塞IO线程。长时间阻塞IO线程导致服务器端处理能力下降。
 	
 	ChannelPipeline用于访问ChannelHanlder的操作
 	get 通过类型或者名称返回CHannelHandler
