@@ -394,21 +394,70 @@ public void channedRead(ChannelHandlerContext ctx,Object msg){
 传递给ByteToMessageDecoder和MessageToByteEncoder的 ByteBuf 无需我们自己释放，会被Netty自动释放掉，
 	ByteToMesageDecoder的释放代码在channelRead finally中，MessageToByteEncoder的在write方法中
 
+Netty中 A线程申请的内存一定要有A线程释放，否则有可能会存在内存泄漏的问题
+	一定不要跨线程释放。
 
+IdleStateHandler会启动ReaderIdleTimeTask，WriteidleTimeoutTask和AllIdleTimeoutTask，都会被加入到NioVentLoopGroup中，
+比单独的ReadTimeoutHandler要消耗性能。readIdle,writeIeld,allIdle在设置为0的时候，不起作用。
 
+linux 优化
+	linux 内核最大文件句柄数，默认1024，可以使用
+	 ulimit -a 查看 open files
+	 vi /etc/security/limits.conf 
+担心 close_WAIT 
+	close_WAIT 状态下并不会释放句柄和内存资源，如果积压过多，可能会导致内存溢出，too many open files等问题。
 
+不要再IO线程上处理业务(心跳发送和检测除外)	
+	IO线程推荐值[cpu核数+1，cpu核数*2]
+	当有复杂逻辑阻塞IO线程是，会影响对其他链路的读写操作。		 
+设计要点2：在I/O线程上执行自定义Task要当心。Netty的I/O处理线程NioEventLoop支持两种自定义Task的执行：
 
+普通的Runnable: 通过调用NioEventLoop的execute(Runnable task)方法执行；
+定时任务ScheduledFutureTask:通过调用NioEventLoop的schedule(Runnable command, long delay, TimeUnit unit)系列接口执行。
 
+尽量不要使用NIOEventLoop中的线程指定自定义的定时任务(心跳除外)。
+可以添加DefaultEventExecutorGroup执行。
 
+设计要点3：IdleStateHandler使用要当心。很多用户会使用IdleStateHandler做心跳发送和检测，这种用法值得提倡。相比于自己启定时任务发送心跳，
+这种方式更高效。但是在实际开发中需要注意的是，在心跳的业务逻辑处理中，无论是正常还是异常场景，处理时延要可控，防止时延不可控导致的NioEventLoop被意外阻塞
+例如，心跳超时或者发生I/O异常时，业务调用Email发送接口告警，由于Email服务端处理超时，导致邮件发送客户端被阻塞，级联引起IdleStateHandler的AllIdleTimeoutTask任务被阻塞，
+最终NioEventLoop多路复用器上其它的链路读写被阻塞。
 
+合理的心跳周期	
+	微信心跳周期300s，或许180s不错。
+	
+使用IdlestateHandler处理心跳，
+public void userEventTriggered({@link ChannelHandlerContext} ctx, {@link Object} evt) throws {@link Exception} {
+          if (evt instanceof {@link IdleStateEvent}} {
+              //心跳处理
+              ctx.writeAndFlush(ping);
+          }
+      }
 
+ByteBuf支持动态容量调整，对于接受缓中区得内存分配，Netty提供了两种。
+	FixedRecvByteBufAllocator：固定长度的接受缓冲区分配器，分配的大小长度固定，并不会根据实际数据的大小动态收缩。
+	AdaptiveRecvByteBufAllocator：容量动态调整的接受缓冲区分配器。他会根据之前Channel接收到的数据包大小进行计算，
+	如果连续填充满接收缓冲区的可写空间，就动态扩展容量，如果连续两次节后到的数据都小于指定值，则收缩当前容量，以节约内存。
+	
+	注：默认使用的就是AdaptiveRecvByteBufAllocator(64,1024,65536) 可以根据自己的需要调节大小。
+	大小建议为消息的平均值。
 
+netty 4.17已经默认使用内存池了。
 
+	Netty的IO线程不能执行时间不可控的操作，例如数据库访问，发送email等
+	记录日志Logger.error在某些情况下也会阻塞IO，导致高并发下的奇怪问题。
+	
+NioEventLoop中的processSelectedKey 方法，可以看到netty对java nio的封装。
+Netty 中的unsafe对象，NioMessageUnsafe。
 
-
-
-
-
+1）先初始化好boss和worker的NioEventLoopGroup，并初始化好Group中的每一个NioEventLoop，为每一个NioEventLoop都穿件一个selector对象
+2）Netty会在bind的动作上，去让boss的NioserverSocketChannel去绑定selector，并启动与boss捆绑在一起的thread，进入无尽的循环
+3）在这个生命不息，循环不止的方法中，主要做了两件事情，1是去select，不管是selectNow()方法还是select()方法，其主要目的就是去查看boss关注的selector是否有事件发生
+4）当有事件发生的时候，一般就是因为有client链接，如果有链接，boss线程就需要做的事情就是初始化封装好新来的SocketChannel
+5）封装好的NioSocketChannel也会有自己的Unsafe对象，这个对象是用来做一些其他的操作的，例如读操作，这与boss的Unsafe对象不一样，boss的Unsafe对象是NioMessageUnsafe是用来进行绑定channel
+6）NioSocketChannel用Boss线程管道中的ServerBootstrapAcceptor对象绑定确定属于自己的worker线程之后，绑定好worker线程的selector之后就开始调用自己的run方法
+用来监听selector上的IO事件
+7）要说明白的一点就是一个worker处理的channel在多链接的场景下，一个worker会处理不止一个SocketChannel
 
 
 

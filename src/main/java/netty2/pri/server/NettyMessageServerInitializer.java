@@ -8,6 +8,7 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import netty2.pri.NettyMessage;
 import netty2.pri.NettyMessageDecoder;
 import netty2.pri.NettyMessageEncoder;
@@ -23,7 +24,7 @@ public class NettyMessageServerInitializer extends ChannelInitializer<Channel>{
 //		new ProtobufVarint32FrameDecoder()
 		ch.pipeline()
 			//.addLast(new LengthFieldBasedFrameDecoder(65535, 0, 4))
-			.addLast(new IdleStateHandler(30, 30, 30))
+			.addLast(new ReadTimeoutHandler(6))
 			.addLast(new ProtobufVarint32FrameDecoder())
 			.addLast(new ProtobufVarint32LengthFieldPrepender())
 			.addLast(new NettyMessageEncoder())

@@ -47,13 +47,21 @@ public class NettyMessageClient {
 				new InetSocketAddress(Consts.HOST, Consts.PORT),	//	
 				new NioEventLoopGroup(1));							//
 		
-		try {
-			client.connect();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			client.stop();
+		for(;;) {
+			try {
+				client.connect();
+			} catch (Exception e) {
+				System.out.println("NettyMessageClient.main() 发生异常!");
+				e.printStackTrace();
+			}
+			
+			System.out.println("--------------重连中-----------");
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e1) {
+			}
 		}
+		
 		
 	}
 	

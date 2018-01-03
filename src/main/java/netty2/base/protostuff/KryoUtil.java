@@ -26,7 +26,6 @@ public class KryoUtil {
 		Header header = new Header();
 		header.setPriority((byte)1);
 		header.setSessionID(ThreadLocalRandom.current().nextLong());
-		header.setType((byte)1);
 		header.setLength(155);
 		Map<String, Object> attachment = new HashMap<>();
 		attachment.put("AA", "AA");

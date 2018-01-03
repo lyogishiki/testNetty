@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -23,13 +24,21 @@ public class LoginAuthRespHandler extends ChannelInboundHandlerAdapter{
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+//		ctx.channel().attr(key)
 		NettyMessage<Object> message = (NettyMessage<Object>) msg;
-		
-		if(message.getHeader() != null && 
-				message.getHeader().getType() == MessageType.LOGIN_REQ) {
+	
+		//是登陆请求
+		if(message.getType() == MessageType.LOGIN_REQ) {
 			doLogin(ctx, message);
-		} else {
+			
+		} else if(ServerContext.isLogin(ctx.channel())){
+		//不是登录请求，已经登录
 			ctx.fireChannelRead(msg);
+		} else {
+//			不是登录请求，而且没有登录。
+//			返回一个非法请求以后，关闭该链接
+			NettyMessage<Object> loginResp = buildResponse((byte)-1);
+			ctx.writeAndFlush(loginResp).addListener(ChannelFutureListener.CLOSE);
 		}
 	
 	}
@@ -59,9 +68,8 @@ public class LoginAuthRespHandler extends ChannelInboundHandlerAdapter{
 	}
 
 	private NettyMessage<Object> buildResponse(byte result){
-		NettyMessage<Object> message = new NettyMessage<>();
+		NettyMessage<Object> message = new NettyMessage<>(MessageType.LOGIN_RESP);
 		Header header = new Header();
-		header.setType(MessageType.LOGIN_RESP);
 		message.setBody(result);
 		message.setHeader(header);
 		return message;

@@ -8,12 +8,10 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.util.ReferenceCountUtil;
 import netty2.base.protostuff.SerializeUtils;
 
-public class NettyMessageEncoder extends MessageToMessageEncoder<Object> {
+public class NettyMessageEncoder extends MessageToMessageEncoder<NettyMessage<Object>> {
 
-	
-	
 	@Override
-	protected void encode(ChannelHandlerContext ctx, Object msg, List<Object> out) throws Exception {
+	protected void encode(ChannelHandlerContext ctx, NettyMessage<Object> msg, List<Object> out) throws Exception {
 		byte[] data = SerializeUtils.serializer(msg);
 		ByteBuf buf = ctx.alloc().buffer(data.length);
 		buf.writeBytes(data);

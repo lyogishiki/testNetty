@@ -22,8 +22,7 @@ public class LoginAuthReqHandler extends ChannelInboundHandlerAdapter{
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		NettyMessage<Object> message = (NettyMessage<Object>) msg;
 		
-		if(message.getHeader() != null && 
-				message.getHeader().getType() == MessageType.LOGIN_RESP) {
+		if(message.getType() == MessageType.LOGIN_RESP) {
 			
 			byte loginResult = (byte) message.getBody();
 			
@@ -45,18 +44,17 @@ public class LoginAuthReqHandler extends ChannelInboundHandlerAdapter{
 		return result == 0;
 	}
 	
-	@Override
+	/*@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		cause.printStackTrace();
 		//MYTASK 为什么传递给之后的Handler处理。
 //	 	要传递给HeartBeatReqHandler，HeartBeat 需要关闭定时发送的任务。
 		ctx.fireExceptionCaught(cause);
-	}
+	}*/
 
 	private NettyMessage<Object> buildLoginReq(){
-		NettyMessage<Object> message = new NettyMessage<>();
+		NettyMessage<Object> message = new NettyMessage<>(MessageType.LOGIN_REQ);
 		Header header = new Header();
-		header.setType(MessageType.LOGIN_REQ);
 		message.setHeader(header);
 		return message;
 	}

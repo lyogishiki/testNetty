@@ -1,5 +1,6 @@
 package netty2.pri;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,7 +26,7 @@ public class ServerContext {
 	public static boolean isLogin(@Nonnull String address) {
 		return loginUserInverse.containsKey(address);
 	}
-	
+
 	public static void removeLoginUser(@Nonnull Channel channel) {
 		Objects.requireNonNull(channel,"Channel不能为空！");
 		String value = loginUser.remove(channel);
@@ -40,6 +41,23 @@ public class ServerContext {
 		
 		loginUser.put(channel, address);
 		loginUserInverse.put(address, channel);
+	}
+	
+	
+	public static Collection<Channel> allLoginChannel() {
+		return loginUserInverse.values();
+	}
+	
+	public static Collection<String> allLoginAddress(){
+		return loginUser.values();
+	}
+	
+	public static String getAddressByChannel(Channel channel) {
+		return loginUser.get(channel);
+	}
+	
+	public static Channel getChannelByAddress(String address) {
+		return loginUserInverse.get(address);
 	}
 	
 	public static boolean isWhite(String ip) {

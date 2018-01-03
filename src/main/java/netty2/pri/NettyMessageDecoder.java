@@ -40,6 +40,8 @@ public class NettyMessageDecoder<T> extends MessageToMessageDecoder<ByteBuf>{
 		
 		NettyMessage<? extends Object> nettyMessage = (NettyMessage<? extends Object>) ois.readObject();
 		out.add(nettyMessage);*/
+//MYTASK 优化，可以在有使用的heatBuf的情况下判断hashArray，如果true,直接调用in.array() 返回byte数组
+		System.out.println("=======hasArray : " + in.hasArray() );
 		
 		byte[] data = new byte[in.readableBytes()];
 		in.readBytes(data);

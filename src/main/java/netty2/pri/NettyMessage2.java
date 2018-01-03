@@ -4,42 +4,29 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NettyMessage<T> implements Serializable{
+public class NettyMessage2<T> implements Serializable{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private byte type;		//消息类型
+	private final byte type;		//消息类型
 	
-	private Header header;
-	private T body;
-	
-	public NettyMessage() {
-		super();
-	}
-	
-	public NettyMessage(byte type, Header header, T body) {
-		super();
-		this.type = type;
-		this.header = header;
-		this.body = body;
-	}
-
-	public NettyMessage(byte type) {
+	public NettyMessage2(byte type) {
 		super();
 		this.type = type;
 	}
-
+	
 	public byte getType() {
 		return type;
 	}
 
-	public void setType(byte type) {
-		this.type = type;
-	}
 
+
+	private Header header;
+	private T body;
+	
 	public Header getHeader() {
 		return header;
 	}
@@ -63,7 +50,7 @@ public class NettyMessage<T> implements Serializable{
      */
     @Override
     public String toString() {
-	return "NettyMessage [type = " + type + " , header = " + header + " , body = " + body + "]";
+	return "NettyMessage [header=" + header + " , body = " + body + "]";
     }
 
 	public static class Header implements Serializable{
@@ -74,7 +61,7 @@ public class NettyMessage<T> implements Serializable{
 		
 		private int length;		//消息长度
 		private long sessionID;	//会话ID
-	
+
 		private byte priority;	//消息优先级
 		private Map<String, Object> attachment = new HashMap<>();	//附件
 		
@@ -102,17 +89,6 @@ public class NettyMessage<T> implements Serializable{
 		}
 		public void setAttachment(Map<String, Object> attachment) {
 			this.attachment = attachment;
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#toString()
-		 */
-		@Override
-		public String toString() {
-			return "Header [length=" + length + ", sessionID=" + sessionID
-					+ ", priority=" + priority + ", attachment=" + attachment + "]";
 		}
 		
 	}
