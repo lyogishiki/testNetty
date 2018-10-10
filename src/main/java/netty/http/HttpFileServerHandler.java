@@ -41,6 +41,7 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 
+import javax.activation.FileTypeMap;
 import javax.activation.MimetypesFileTypeMap;
 
 public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
@@ -106,6 +107,7 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
 		long fileLength = randomAccessFile.length();
 		HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
 		HttpUtil.setContentLength(response, fileLength);
+
 		setContentTypeHeader(response, file);
 		if (HttpUtil.isKeepAlive(request)) {
 			response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
@@ -167,6 +169,8 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
 	private static void sendListing(ChannelHandlerContext ctx,File dir){
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK);
 		response.headers().set(RtspHeaderNames.CONTENT_TYPE,"text/html; charset=UTF-8");
+//		response.headers().set(HttpHeaderNames.CONTENT_LENGTH,)
+//		response.headers().set(HttpHeaderNames.CONNECTION,HttpHeaderValues.KEEP_ALIVE)
 		StringBuilder buf = new StringBuilder();
 		String dirPath = dir.getPath();
 		//String parentName = dir.getParentFile().getName();
@@ -211,7 +215,8 @@ public class HttpFileServerHandler extends SimpleChannelInboundHandler<FullHttpR
 	}
 
 	private static void setContentTypeHeader(HttpResponse response,File file){
-		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
+//		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
+		FileTypeMap mimeTypesMap = MimetypesFileTypeMap.getDefaultFileTypeMap();
 		response.headers().set(RtspHeaderNames.CONTENT_TYPE,
 				mimeTypesMap.getContentType(file.getPath()));
 		System.out.println(mimeTypesMap.getContentType(file.getPath()));
