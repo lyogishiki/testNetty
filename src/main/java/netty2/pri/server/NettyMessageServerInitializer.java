@@ -24,7 +24,7 @@ public class NettyMessageServerInitializer extends ChannelInitializer<Channel>{
 //		new ProtobufVarint32FrameDecoder()
 		ch.pipeline()
 			//.addLast(new LengthFieldBasedFrameDecoder(65535, 0, 4))
-			.addLast(new ReadTimeoutHandler(6))
+			.addLast(new ReadTimeoutHandler(300))
 			.addLast(new ProtobufVarint32FrameDecoder())
 			.addLast(new ProtobufVarint32LengthFieldPrepender())
 			.addLast(new NettyMessageEncoder())

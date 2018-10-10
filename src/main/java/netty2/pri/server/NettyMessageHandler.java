@@ -54,6 +54,9 @@ public class NettyMessageHandler extends SimpleChannelInboundHandler<NettyMessag
 		ctx.close();
 	}
 
+	/**
+	 * 和IdleStateHandler 配合使用。
+	 */
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		if(evt instanceof IdleStateEvent) {

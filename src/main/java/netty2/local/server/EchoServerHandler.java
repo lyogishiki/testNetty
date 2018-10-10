@@ -45,6 +45,16 @@ ChannelInboundHandlerAdapter{
 			}
 		}).start();*/
 	}
+	
+	
+
+	@Override
+	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+//		System.out.println("EchoServerHandler.channelRegistered()");
+		super.channelRegistered(ctx);
+	}
+
+
 
 	@Override
 	public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {

@@ -78,12 +78,15 @@ public class NettyMessageClientHandler extends SimpleChannelInboundHandler<Netty
 		ctx.close();
 	}
 
+
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		if (evt instanceof IdleStateEvent) {
 			IdleStateEvent event = (IdleStateEvent) evt;
 			System.out.println(event + ":" + event.state() + "-------------------关闭连接-------------------------");
-			ctx.close();
+			System.out.println("发送心跳服务。");
+			ctx.writeAndFlush(HeartBeatReqHandler.PING_MESSAGE);
+//			ctx.close();
 		} else {
 			ctx.fireUserEventTriggered(evt);
 		}

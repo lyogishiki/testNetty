@@ -44,7 +44,7 @@ ServerBootStrap	，服务端，绑定本地连接，使用2个EventLoopGroup，�
 	childGroup包含所有已创建的用来处理传入客户端连接的Channel
 
 Netty的Channel是线程安全的。消息会被保证按顺序发送
-零拷贝 是一种快速搞笑的将数据从文件系统移动到网络接口，而不需要将其从内核空间复制到用户空间
+零拷贝 是一种快速高效的将数据从文件系统移动到网络接口，而不需要将其从内核空间复制到用户空间
 Epoll linux的本地非阻塞传输
 Netty 使用Epoll，linux环境，高负载情况下，可能由于JDK NIO
 	只需将NioEventLoopGroup替换为EpollEventLoopGroup，NIOServerSocketChannel替换为
@@ -374,9 +374,11 @@ SO_RECVBUF和SO_SNDBUF 通常建议值为128K或者256K
 SO_TCPNODELAY：NAGLE算法通过将缓冲区内的小封包自动组成一个大的封包，组织大量小包发送阻塞网络，从而提高网络效率，但是对于延时敏感的场景需要关闭这项优化，true 关闭优化，有数据就发。
 软终端：如果LINUX内
 SO_BACKLOG 用于构建服务器端ServerSocket，标识当服务器请求处理线程全满，用于临时存放已完成3次握手请求的队列的最大长度。
-SO_KEEPALIVE	启动心跳机制。如果在两个小时内没有数据通信，TCP会自动发送一个活动探测数据报文。
 
+SO_KEEPALIVE	启动心跳机制。如果在两个小时内没有数据通信，
+	TCP会自动发送一个活动探测数据报文。客户端缺失没有需要发送数据，客户端进程意外终止运行，客户端所在的服务器宕机， 或者停电，网络设备中间设备掐断连接，进行强制关闭。
 
+TCP_NODELAY : 发送小包的情况下，是否使用延迟一定时间来使小包组装成大包，一起发送，设置为true，关闭延迟发送小包。
 
 ChannelInboundHandlerAdapter需要自己释放接收到的ByteBuffer。****
 通常作如下处理,一定不要忘记释放Bytebuf，否则可能会造成内存泄漏

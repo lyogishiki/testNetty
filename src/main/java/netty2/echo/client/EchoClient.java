@@ -61,16 +61,16 @@ public class EchoClient {
 		int port = 9090;
 		
 		ExecutorService service = Executors.newFixedThreadPool(4);
-		
-		for(int i=0;i<100*10;i++) {
+		new EchoClient(host, port).start();
+		/*for(int i=0;i<100*10;i++) {
 			service.submit(() -> {
 				try {
-					new EchoClient(host, port).start();
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			});
-		}
+		}*/
 //		new EchoClient(host, port).start();
 		long end = System.currentTimeMillis();
 		

@@ -56,6 +56,8 @@ SimpleChannelInboundHandler<ByteBuf>{
 			ctx.writeAndFlush(Unpooled.copiedBuffer(
 					"Hello Netty!" + random.nextInt(10000), StandardCharsets.UTF_8));
 		}
+		
+		
 		//
 		LOGGER.info("EchoClientHandler.channelActive()" + ctx.channel());
 	}

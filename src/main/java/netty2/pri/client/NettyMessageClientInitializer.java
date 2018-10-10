@@ -21,7 +21,7 @@ public class NettyMessageClientInitializer extends ChannelInitializer<Channel> {
 		
 		ch.pipeline()
 		//.addLast(new LengthFieldBasedFrameDecoder(65535, 0, 4))
-//		.addLast(new IdleStateHandler(readerIdleTimeSeconds, writerIdleTimeSeconds, allIdleTimeSeconds))
+//		.addLast(new IdleStateHandler(3, 3, 3))			//和userEventTriggered搭配使用.
 		.addLast(new ReadTimeoutHandler(300))
 		.addLast(new ProtobufVarint32FrameDecoder())
 		.addLast(new ProtobufVarint32LengthFieldPrepender())

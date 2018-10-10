@@ -6,6 +6,8 @@ import java.util.List;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.util.back.ReferenceCountUtil;
+import io.netty.util.internal.ReflectionUtil;
 
 public class UpdTimeDecoder extends ByteToMessageDecoder{
 
@@ -16,8 +18,7 @@ public class UpdTimeDecoder extends ByteToMessageDecoder{
 			UpdTime time = new UpdTime(in.readLong());
 			out.add(time);
 		}
-		
-		in.release();
+		//		in.release();
 	}
 
 	

@@ -38,21 +38,25 @@ SimpleChannelInboundHandler<ByteBuf>{
 	}
 
 	
-	
+	/**
+	 *  不能在registered中发送数据,发送不出去....
+	 *  ChannelRegistered：Channel已经被注册到了EventLoop,还不能用来发送数据
+	 */
 	@Override
 	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
 		//
-		ctx.writeAndFlush(Unpooled.copiedBuffer(
-				"Hello Netty!", StandardCharsets.UTF_8));
-		System.out.println("EchoClientHandler.channelRegistered()" + ctx.channel());
+		
 	}
 
 
 
 	//当与服务器的连接建立后调用
+//		ChannelActive:Channel处于活动状态(已经连接到其他的远程节点)	,可以发送接收数据了
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-	
+		ctx.writeAndFlush(Unpooled.copiedBuffer(
+				"Hello Netty!", StandardCharsets.UTF_8));
+		System.out.println("EchoClientHandler.channelRegistered()" + ctx.channel());
 	}
 
 	@Override

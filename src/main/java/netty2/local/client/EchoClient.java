@@ -18,23 +18,15 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 public class EchoClient {
 
-	private final String host;
-	private final int port;
-	public EchoClient(String host, int port) {
-		super();
-		this.host = host;
-		this.port = port;
-	}
-	
 	public void start() throws Exception{
 		
 		EventLoopGroup group = 
 				new DefaultEventLoopGroup(1);
 		
+		LocalAddress address = new LocalAddress("ghost");
 		try {
 			Bootstrap b = new Bootstrap();
 			b.group(group).channel(LocalChannel.class)
-			.localAddress(new LocalAddress("ghost"))
 			.handler(
 					new ChannelInitializer<LocalChannel>() {
 				@Override
@@ -44,12 +36,15 @@ public class EchoClient {
 					.addLast(new EchoClientHandler());
 				}
 			});
-			ChannelFuture f = b.bind().sync();
 			
-			System.out.println(f.channel().getClass());
-			System.out.println("mmmm"+f.channel());
+
+			
+			ChannelFuture future = b.connect(address).sync();
+			
+//			System.out.println(f.channel().getClass());
+//			System.out.println("mmmm"+f.channel());
 //			System.out.println(f.channel().alloc());
-			f.channel().closeFuture().sync();
+			future.channel().closeFuture().sync();
 		} finally {
 			group.shutdownGracefully().sync();
 		}
@@ -69,7 +64,7 @@ public class EchoClient {
 			}).start();
 			
 		}*/
-		new EchoClient(host, port).start();
+		new EchoClient().start();
 		long end = System.currentTimeMillis();
 		
 		System.out.println(end - start);
