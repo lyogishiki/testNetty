@@ -26,6 +26,7 @@ public class TestCase {
 		buf.writeInt(5);
 		buf.writeInt(6);
 		
+		
 	}
 	
 	@Test
