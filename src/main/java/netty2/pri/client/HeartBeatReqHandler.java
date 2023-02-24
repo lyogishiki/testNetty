@@ -1,20 +1,16 @@
 package netty2.pri.client;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
-import org.springframework.boot.devtools.tunnel.server.StaticPortProvider;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.concurrent.DefaultEventExecutor;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.ScheduledFuture;
 import netty2.pri.MessageType;
 import netty2.pri.NettyMessage;
-import netty2.pri.NettyMessage.Header;
 
 public class HeartBeatReqHandler extends ChannelInboundHandlerAdapter{
 	
@@ -78,9 +74,10 @@ public class HeartBeatReqHandler extends ChannelInboundHandlerAdapter{
 
 		@Override
 		public void run() {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			if(ctx.channel().isActive()) {
 				NettyMessage<Void> heatBeat = buildHeartBeat();
-				System.out.println("Client send heart beat message to Server : "
+				System.out.println(sdf.format(new Date()) + ":Client send heart beat message to Server : "
 						+ heatBeat);
 				ctx.writeAndFlush(heatBeat);
 			} else {

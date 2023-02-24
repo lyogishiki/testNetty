@@ -33,7 +33,7 @@ public class NettyMessageClientHandler extends SimpleChannelInboundHandler<Netty
 		header.setAttachment(attachment);
 		nettyMessage.setHeader(header);
 
-		ctx.writeAndFlush(nettyMessage);
+//		ctx.writeAndFlush(nettyMessage);
 	}
 
 	@Override

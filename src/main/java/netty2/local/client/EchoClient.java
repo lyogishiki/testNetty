@@ -23,7 +23,7 @@ public class EchoClient {
 		EventLoopGroup group = 
 				new DefaultEventLoopGroup(1);
 		
-		LocalAddress address = new LocalAddress("ghost");
+		LocalAddress address = new LocalAddress("127.0.0.1");
 		try {
 			Bootstrap b = new Bootstrap();
 			b.group(group).channel(LocalChannel.class)

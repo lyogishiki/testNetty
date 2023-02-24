@@ -36,8 +36,9 @@ public class LogEventMonitor {
 	}
 	
 	public Channel bind() {
-		return bootstrap.bind(7072).syncUninterruptibly()
+		return bootstrap.bind().syncUninterruptibly()
 				.channel();
+		
 	}
 	
 	public void stop() {

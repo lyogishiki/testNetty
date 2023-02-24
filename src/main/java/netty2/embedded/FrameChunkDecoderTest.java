@@ -3,9 +3,6 @@ package netty2.embedded;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.intThat;
-
-import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 
@@ -13,7 +10,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.TooLongFrameException;
-import io.netty.util.back.ReferenceCountUtil;
 
 public class FrameChunkDecoderTest {
 

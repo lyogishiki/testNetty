@@ -71,7 +71,8 @@ ChannelInboundHandlerAdapter{
 			
 			
 		});*/
-		
+
+//		服务端主动关闭.
 		ctx.channel().writeAndFlush(buf).addListener(ChannelFutureListener.CLOSE);
 		ctx.fireChannelRead(msg);
 		

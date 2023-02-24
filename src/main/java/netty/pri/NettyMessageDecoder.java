@@ -66,7 +66,7 @@ public class NettyMessageDecoder extends LengthFieldBasedFrameDecoder {
 				String key = new String(keyArray,"UTF-8");
 				attachment.put(key, marshallingDecoder.decode(frame));
 			}
-			
+			header.setAttachment(attachment);
 		}
 		
 		if(frame.readableBytes() > 4){

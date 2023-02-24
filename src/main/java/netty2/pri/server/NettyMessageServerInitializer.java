@@ -22,6 +22,7 @@ public class NettyMessageServerInitializer extends ChannelInitializer<Channel>{
 //		new ProtoBufEnocod
 //		new ProtobufVarint32LengthFieldPrepender()
 //		new ProtobufVarint32FrameDecoder()
+		
 		ch.pipeline()
 			//.addLast(new LengthFieldBasedFrameDecoder(65535, 0, 4))
 			.addLast(new ReadTimeoutHandler(300))
@@ -32,6 +33,7 @@ public class NettyMessageServerInitializer extends ChannelInitializer<Channel>{
 			.addLast(LoginAuthRespHandler.DEFAULT_INSTANCE)
 			.addLast(HeartBeatRespHandler.DEFAULT_INSTANCE)
 			.addLast(NettyMessageHandler.DEFAULT_INSTANCE);
+		
 	}
 
 }

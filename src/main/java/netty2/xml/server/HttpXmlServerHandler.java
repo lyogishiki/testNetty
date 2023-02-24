@@ -1,7 +1,5 @@
 package netty2.xml.server;
 
-import static org.mockito.Matchers.startsWith;
-
 import java.nio.charset.StandardCharsets;
 
 import io.netty.buffer.Unpooled;

@@ -1,6 +1,7 @@
 package netty.websocketx.client;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -12,6 +13,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -26,10 +28,18 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 public class WebSocketClient {
+	
 
-	static final String URL = System.getProperty("url", "ws://127.0.0.1:8080/websocket");
+	static final String URL = System.getProperty("url", "wss://127.0.0.1:8443/websocket");
 
 	public static void main(String[] args) throws Exception {
 	    URI uri = new URI(URL);
@@ -56,13 +66,33 @@ public class WebSocketClient {
 	    final boolean ssl = "wss".equalsIgnoreCase(scheme);
 	    final SslContext sslCtx;
 	    if (ssl) {
-	        sslCtx = SslContextBuilder.forClient()
-	            .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+//	        sslCtx = SslContextBuilder.forClient()
+//	            .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+	    	
+	    	
+	    	 TrustManager trustAllCerts = new X509TrustManager() {
+	             public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+	                 return new java.security.cert.X509Certificate[]{};
+	             }
+	             @Override
+	             public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+	  
+	             }
+	             @Override
+	             public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+	  
+	             }
+	         };
+	    	
+	    	sslCtx = SslContextBuilder.forClient()
+	    			.trustManager(trustAllCerts)
+	    			.build();
 	    } else {
 	        sslCtx = null;
 	    }
 
-	    EventLoopGroup group = new NioEventLoopGroup();
+	    EventLoopGroup group = new NioEventLoopGroup(1);
+	    
 	    try {
 	        // Connect with V13 (RFC 6455 aka HyBi-17). You can change it to V08 or V00.
 	        // If you change it to V00, ping is not supported and remember to change
@@ -105,11 +135,19 @@ public class WebSocketClient {
 	            } else if ("ping".equals(msg.toLowerCase())) {
 	                WebSocketFrame frame = new PingWebSocketFrame(Unpooled.wrappedBuffer(new byte[] { 8, 1, 8, 1 }));
 	                ch.writeAndFlush(frame);
-	            } else {
-	                WebSocketFrame frame = new TextWebSocketFrame(msg);
-	                ch.writeAndFlush(frame);
+	            } else if("b".equals(msg.toLowerCase())){
+	            	ByteBuf buf = Unpooled.wrappedBuffer("binary".getBytes(StandardCharsets.UTF_8));
+	            	BinaryWebSocketFrame frame = new BinaryWebSocketFrame(buf);
+	            	ch.writeAndFlush(frame);
+	            }else {
+	            	WebSocketFrame frame = new TextWebSocketFrame(msg);
+	            	ch.writeAndFlush(frame);
 	            }
 	        }
+	        
+	        
+	        
+	        ch.closeFuture().sync();
 	    } finally {
 	        group.shutdownGracefully();
 	    }

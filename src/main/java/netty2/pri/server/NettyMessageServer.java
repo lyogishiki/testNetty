@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.AdaptiveRecvByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -51,10 +52,11 @@ public class NettyMessageServer {
 		serverBootstrap.
 			group(bossGroup, workGroup)
 			.channel(NioServerSocketChannel.class)
-			.option(ChannelOption.SO_BACKLOG, 512)
-			.option(ChannelOption.SO_RCVBUF, 128 * 1024)
+//			.option(ChannelOption.SO_BACKLOG, 512)
+//			.option(ChannelOption.SO_RCVBUF, 128 * 1024)
 			.childOption(ChannelOption.SO_KEEPALIVE, true)
 			.childOption(ChannelOption.SO_SNDBUF, 128 * 1024)
+			.childOption(ChannelOption.RCVBUF_ALLOCATOR, new AdaptiveRecvByteBufAllocator(128,2048,655360))
 			.localAddress(new InetSocketAddress(host, port))
 			.childHandler(new NettyMessageServerInitializer());		
 		
@@ -103,7 +105,7 @@ public class NettyMessageServer {
 					//ReferenceCountUtil.release(buf);
 				});
 				
-			}, 30, 40, TimeUnit.SECONDS);
+			}, 130, 130, TimeUnit.SECONDS);
 			
 			
 			
@@ -114,4 +116,5 @@ public class NettyMessageServer {
 			server.stop();
 		}
 	}
+	
 }

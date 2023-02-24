@@ -1,7 +1,5 @@
 package netty2.xml;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head;
-
 import java.net.InetAddress;
 import java.util.List;
 

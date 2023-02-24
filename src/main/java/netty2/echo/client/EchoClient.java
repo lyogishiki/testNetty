@@ -60,7 +60,7 @@ public class EchoClient {
 		String host = "127.0.0.1";
 		int port = 9090;
 		
-		ExecutorService service = Executors.newFixedThreadPool(4);
+//		ExecutorService service = Executors.newFixedThreadPool(4);
 		new EchoClient(host, port).start();
 		/*for(int i=0;i<100*10;i++) {
 			service.submit(() -> {
@@ -76,6 +76,6 @@ public class EchoClient {
 		
 		System.out.println(end - start);
 		
-		service.shutdown();
+//		service.shutdown();
 	}	
 }

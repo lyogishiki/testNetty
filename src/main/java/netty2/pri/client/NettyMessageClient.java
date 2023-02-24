@@ -9,6 +9,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import netty.Consts;
 
 import java.net.InetSocketAddress;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
@@ -46,9 +48,9 @@ public class NettyMessageClient {
 	
 	public static void main(String[] args) {
 		NettyMessageClient client = new NettyMessageClient(
-				new InetSocketAddress(Consts.HOST, Consts.PORT),	//	
+				new InetSocketAddress(Consts.HOST, 18081),	//	
 				new NioEventLoopGroup(1));							//
-		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		for(;;) {
 			try {
 				client.connect();
@@ -57,7 +59,7 @@ public class NettyMessageClient {
 				e.printStackTrace();
 			}
 			
-			System.out.println("--------------重连中-----------");
+			System.out.println(sdf.format(new Date()) + ":--------------重连中-----------");
 			try {
 				Thread.sleep(10000);
 			} catch (InterruptedException e1) {
