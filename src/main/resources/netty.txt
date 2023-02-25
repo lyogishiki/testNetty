@@ -298,7 +298,7 @@ ReadTimeoutHandler	如果在指定的时间间隔内没有收到任何的入站�
 WriteTimeoutHandler 如果指定的时间间隔内并没有任何出站数据，则抛出一个writeTimeoutException并关闭对应的Channel，可以通过重写CHannelHandler的exceptionCaught方法来检测该WriteTimeoutException
 
 使用分隔符的协议解码器。
-DelimiterBaseFrameDecoder 使用任何由用户提供的分隔符来提取数据帧的通用解码器
+DelimiterBasedFrameDecoder 使用任何由用户提供的分隔符来提取数据帧的通用解码器
 LineBasedFrameDecoder	提取由行尾(\r\n ,\n)分隔的解码器，比DelimiterBasedFrameDecoder更快
 
 基于长度的协议
@@ -370,7 +370,7 @@ UDP
 	包含了接受者和可选的发送者的地址，以及消息的有效负载本身。
 
 ChannelOptin
-SO_RECVBUF和SO_SNDBUF 通常建议值为128K或者256K
+SO_RCVBUF和SO_SNDBUF 通常建议值为128K或者256K,可通过带宽*带宽时延来计算，新版本Linux内核已经可以动态调整这个大小了，不需要设置了。
 SO_TCPNODELAY：NAGLE算法通过将缓冲区内的小封包自动组成一个大的封包，组织大量小包发送阻塞网络，从而提高网络效率，但是对于延时敏感的场景需要关闭这项优化，true 关闭优化，有数据就发。
 软终端：如果LINUX内
 SO_BACKLOG 用于构建服务器端ServerSocket，标识当服务器请求处理线程全满，用于临时存放已完成3次握手请求的队列的最大长度。

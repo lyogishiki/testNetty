@@ -11,7 +11,7 @@ debug：为true时，将会打印logback内部日志信息，实时查看logback
     <!--设置变量property，name是变量的名称,value是定义变量的值，定义变量之后，可以通过${}来使用变量，
     可以定义很多个  -->
     
-    <property name="log.path" value="E:\\ss\\logback\\logback" />
+    <property name="log.path" value="D:\\ss\\logback\\logback" />
     
     <!-- appender用来格式化日志输出，有name和class两个属性，class用来指定输出策略。常用的就是控制台输出
     和文件输出。 -->
